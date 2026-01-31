@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths-ignore:
       - "helm/**"
       - "**/*.md"
@@ -46,10 +46,9 @@ jobs:
         with:
           context: .
           push: true
-         tags: |
-        karray005/go-web-app:${{ steps.vars.outputs.tag }}
-        karray005/go-web-app:latest
-
+          tags: |
+            karray005/go-web-app:${{ steps.vars.outputs.tag }}
+            karray005/go-web-app:latest
 
       - name: Update Helm values.yaml
         run: |
