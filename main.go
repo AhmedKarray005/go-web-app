@@ -26,6 +26,9 @@ func contactPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/home", http.StatusFound)
+	})
 
 	http.HandleFunc("/home", homePage)
 	http.HandleFunc("/courses", coursePage)
@@ -37,3 +40,4 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
