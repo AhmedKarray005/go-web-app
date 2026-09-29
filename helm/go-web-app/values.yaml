@@ -6,4 +6,4 @@ image:
   repository: karray005/go-web-app
   pullPolicy: IfNotPresent
   # CI updates this tag after publishing the image.
-  tag: 5-96ce69c
+  tag: 6-fbc2082
