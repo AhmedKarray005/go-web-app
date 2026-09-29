@@ -1,0 +1,44 @@
+name: Validate pull request
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Test Go application
+        run: go test ./...
+      - uses: azure/setup-helm@v5
+        with:
+          version: v3.18.4
+      - name: Validate chart and image override
+        run: |
+          helm lint helm/go-web-app
+          helm template portfolio helm/go-web-app --set image.repository=example.test/portfolio --set-string image.tag=verification-tag --set image.pullPolicy=Always > rendered.yaml
+          grep -F 'image: "example.test/portfolio:verification-tag"' rendered.yaml
+          grep -F 'imagePullPolicy: Always' rendered.yaml
+          if grep -q 'rewrite-target' rendered.yaml k8s/manifests/ingress.yaml; then
+            echo 'Application routes must be forwarded unchanged'
+            exit 1
+          fi
+      - name: Build and smoke-test container
+        run: |
+          docker build -t go-web-app:check .
+          container=$(docker run -d -p 127.0.0.1:8080:8080 go-web-app:check)
+          trap 'docker logs "$container"; docker rm -f "$container"' EXIT
+          curl --fail --retry 10 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080/home > /dev/null
+          for route in home courses about contact; do
+            status=$(curl --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:8080/$route")
+            test "$status" = 200
+          done
+          curl --silent --dump-header headers.txt --output /dev/null http://127.0.0.1:8080/
+          grep -i '^Location: /home' headers.txt

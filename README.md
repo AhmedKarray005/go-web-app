@@ -99,8 +99,11 @@ A maintainer must configure `DOCKERHUB_TOKEN` as a GitHub Actions secret and all
 the workflow to write repository contents. A fork also needs its own registry
 namespace. No registry credential belongs in Git.
 
-The workflow currently has no pull-request trigger, Helm validation job, image
-scan, or deployment verification step.
+A separate [pull-request validation workflow](.github/workflows/validate.yml)
+runs Go tests, checks Helm image overrides and preserved ingress paths, then
+builds the Docker image and smoke-tests its HTTP routes. It has read-only
+repository permissions and does not publish images or deploy a cluster.
+There is no image scan or cluster rollout verification step.
 
 ## Source layout
 
