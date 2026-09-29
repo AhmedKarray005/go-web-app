@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
         - name: go-web-app
-          image: karray005/go-web-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080

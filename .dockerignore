@@ -1,0 +1,10 @@
+.git
+.github
+helm
+k8s
+main
+*.exe
+*.test
+*.out
+.env
+.env.*
