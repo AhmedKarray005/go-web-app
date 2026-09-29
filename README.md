@@ -120,8 +120,9 @@ There is no image scan or cluster rollout verification step.
 
 On 29 September 2026, `go test ./...`, a native build and HTTP route smoke checks
 passed. Helm lint and rendering were checked, including an overridden image tag.
-Container build and cluster rollout were not run because the local Docker engine
-was unavailable.
+The local Docker engine was unavailable. The [pull-request validation run](https://github.com/AhmedKarray005/go-web-app/actions/runs/36560987088)
+subsequently passed the Docker build, container HTTP smoke checks and Helm
+regression checks on GitHub Actions. A real Kubernetes rollout remains unverified.
 
 This is a deployment learning project. It has one application test and no
 database, authentication, TLS setup, resource limits, health probes or
